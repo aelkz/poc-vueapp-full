@@ -1,0 +1,34 @@
+td.link {
+  color: #363636;
+  cursor: default;
+}
+
+td.link:hover {
+  color: blue;
+  cursor: pointer;
+}
+
+vue-logo {
+  position: relative;
+  width: 15%;
+  height: 15%;
+}
+
+img.lifecycle {
+  position: relative;
+  width: 15%;
+  height: 15%;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 15px 30px;
+  background: #f9f7f5;
+}
+
+label.label {
+  text-align: left;
+}
+
+.fixo{float: right; margin-right: 10px; margin-top: 0px; z-index: 1000;}

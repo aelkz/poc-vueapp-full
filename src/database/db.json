@@ -1,0 +1,78 @@
+{
+  "breweries": [
+    {
+      "id": 1,
+      "name": "(512) Brewing Company",
+      "description": "407 Radam, F200",
+      "unit_value": "",
+      "city": "Austin",
+      "state": "Texas",
+      "code": "78745",
+      "country": "United States",
+      "phone": "512.707.2337",
+      "website": "http://512brewing.com/",
+      "filepath": "",
+      "descript": "(512) Brewing Company is a microbrewery located in the heart of Austin that brews for the community using as many local, domestic and organic ingredients as possible.",
+      "add_user": 0,
+      "last_mod": "2010-07-22 20:00:20",
+      "geocode": {
+        "id": 1,
+        "breweryId": 1,
+        "latitude": 30.2234,
+        "longitude": -97.7697,
+        "accuracy": "ROOFTOP"
+      }
+    },
+    {
+      "id": 102,
+      "name": "Bent River Brewing",
+      "address1": "1413 Fifth Avenue",
+      "address2": "",
+      "city": "Moline",
+      "state": "Illinois",
+      "code": "61265",
+      "country": "United States",
+      "phone": "1-309-797-2722",
+      "website": "",
+      "filepath": "",
+      "descript": "",
+      "add_user": 0,
+      "last_mod": "2010-07-22 20:00:20",
+      "geocode": {
+        "id": 96,
+        "breweryId": 102,
+        "latitude": 41.5059,
+        "longitude": -90.5171,
+        "accuracy": "RANGE_INTERPOLATED"
+      }
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "PC Desktop Dell",
+      "description": "xxxxxxxxxxxxxxxxxxxxx",
+      "unitValue": 5,
+      "serialNumber": "XXX-999-999",
+      "acquisitionDate": "01/01/2017",
+      "category": "Hardware",
+      "subCategory": "Computadores/Notebooks",
+      "status": 0,
+      "vendorMail": "vendor1@company.com",
+      "vendorPhone": "1019998888"
+    },
+    {
+      "id": 2,
+      "name": "Notebook Dell",
+      "description": "xxxxxxxxxxxxxxxxxxxxx",
+      "unitValue": 5,
+      "serialNumber": "XXX-999-999",
+      "acquisitionDate": "01/01/2017",
+      "category": "Hardware",
+      "subCategory": "Computadores/Notebooks",
+      "status": 0,
+      "vendorMail": "vendor1@company.com",
+      "vendorPhone": "1019998888"
+    }
+  ]
+}
