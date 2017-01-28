@@ -52,27 +52,27 @@
       "id": 1,
       "name": "PC Desktop Dell",
       "description": "xxxxxxxxxxxxxxxxxxxxx",
-      "unitValue": 5,
+      "unitValue": "99,999",
       "serialNumber": "XXX-999-999",
       "acquisitionDate": "01/01/2017",
       "category": "Hardware",
       "subCategory": "Computadores/Notebooks",
       "status": 0,
       "vendorMail": "vendor1@company.com",
-      "vendorPhone": "1019998888"
+      "vendorPhone": "1059198333"
     },
     {
       "id": 2,
       "name": "Notebook Dell",
       "description": "xxxxxxxxxxxxxxxxxxxxx",
-      "unitValue": 5,
+      "unitValue": "500",
       "serialNumber": "XXX-999-999",
       "acquisitionDate": "01/01/2017",
       "category": "Hardware",
       "subCategory": "Computadores/Notebooks",
       "status": 0,
       "vendorMail": "vendor1@company.com",
-      "vendorPhone": "1019998888"
+      "vendorPhone": "1012308456"
     }
   ]
 }

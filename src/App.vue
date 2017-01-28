@@ -5,8 +5,8 @@
       <div class="container">
         <div class="nav-left">
           <a class="nav-item">
-            <img src="./src/assets/img/logo.png" class="vue-logo" title="Vue.js 2.0">
-            <span>Vue.js</span>
+            <img src="./src/assets/img/logo.png" class="vue-logo" title="Vue.js 2.1.0">
+            <span>Vue.js 2.1.0</span>
           </a>
         </div>
         <div class="nav-center">

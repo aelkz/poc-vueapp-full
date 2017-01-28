@@ -57,37 +57,113 @@
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Produto: {{selected.name}}</p>
+          <p class="modal-card-title" v-if="!isNew">Detalhes do produto: {{selected.name}}</p>
+          <p class="modal-card-title" v-else>Cadastrar novo produto</p>
           <button class="delete" @click.prevent="showModal=false"></button>
         </header>
 
         <section class="modal-card-body">
+
           <div class="columns">
-            <div class="column">
-              <label class="label">Nome</label>
-              <p class="control">
-                <input class="input" type="text" placeholder="Nome" :readonly="readOnly" v-model="selected.name">
-              </p>
-            </div>
             <div class="column" v-show="!isNew">
               <label class="label">ID</label>
               <p class="control">
                 <input class="input" type="text" placeholder="ID" :readonly="readOnly" v-model="selected.id">
               </p>
             </div>
+            <div class="column is-three-quarters">
+              <label class="label">Nome</label>
+              <p class="control">
+                <input class="input" type="text" placeholder="Nome" :readonly="readOnly" v-model="selected.name">
+              </p>
+            </div>
           </div>
-          <label class="label">Descrição</label>
-          <p class="control">
-            <textarea class="textarea" placeholder="Descrição" v-model="selected.description"></textarea>
-          </p>
-          <p class="control">
-            <label class="label">Valor unitário</label>
-            <input class="input" type="text" placeholder="Valor unitário" v-model="selected.unitValue" v-mask="'#.##0,00'" />
-          </p>
-          <label class="label">Situação</label>
-          <p class="control">
-            <input class="input" type="text" placeholder="Text input" v-model="selected.status">
-          </p>
+
+          <div class="columns">
+            <div class="column">
+              <label class="label">Descrição</label>
+              <p class="control">
+                <textarea class="textarea" placeholder="Descrição" v-model="selected.description"></textarea>
+              </p>
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <p class="control">
+                <label class="label">Valor unitário</label>
+                <input class="input" type="text" placeholder="Valor unitário" v-model="selected.unitValue" v-maskrev="'#.##0,00'" />
+              </p>
+            </div>
+            <div class="column">
+              <p class="control">
+                <label class="label">Número serial</label>
+                <input class="input" type="text" placeholder="Número serial" v-model="selected.serialNumber" v-mask="'SSS-000-000'" />
+              </p>
+            </div>
+            <div class="column">
+              <p class="control">
+                <label class="label">Data de aquisição</label>
+                <input class="input" type="text" placeholder="Data de aquisição" v-model="selected.acquisitionDate" v-mask="'00/00/0000'" />
+              </p>
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="column is-half">
+              <p class="control">
+                <label class="label">Categoria</label>
+                <span class="select">
+                  <select>
+                    <option>hardware</option>
+                    <option>software</option>
+                  </select>
+                </span>
+              </p>
+            </div>
+            <div class="column is-half">
+              <p class="control">
+                <label class="label">Sub-categoria</label>
+                <span class="select">
+                  <select>
+                  </select>
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="column is-half">
+              <p class="control">
+                <label class="label">Situação</label>
+                <label class="radio">
+                  <input type="radio" name="status" v-model="selected.status">
+                  Disponível
+                </label>
+                <label class="radio">
+                  <input type="radio" name="statusn" v-model="selected.status">
+                  Em utilização
+                </label>
+              </p>
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="column is-half">
+              <p class="control">
+                <label class="label">E-mail do fornecedor</label>
+                <input class="input" type="text" placeholder="E-mail do fornecedor" v-model="selected.vendorMail" />
+              </p>
+            </div>
+            <div class="column">
+              <label class="label">Telefone comercial do fornecedor</label>
+              <p class="control">
+                <input type="tel" class="input" v-model="selected.vendorPhone" v-intlphone>
+                <span class="help is-danger is-hidden" id="invalid-phone">Telefone comercial inválido</span>
+                <span class="help is-success is-hidden" id="valid-phone">Telefone comercial válido</span>
+              </p>
+            </div>
+          </div>
         </section>
 
         <footer class="modal-card-foot">
@@ -105,15 +181,17 @@
   import Pagination from './Pagination.vue'
   import VLink from './VLink.vue'
 
+  require("intl-tel-input");
+
   // jquery mask
   // http://igorescobar.github.io/jQuery-Mask-Plugin/
-
-  // jquery-masked-input
-  // https://github.com/digitalBush/jquery.maskedinput
 
   // datepicker
   // https://laracasts.com/discuss/channels/vue/vuejs-get-v-model-value-in-custom-directive
   // https://forum.vuejs.org/t/making-jquery-ui-datepicker-works-with-vuejs/2752/7
+
+  // form validation
+  // https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.nxac31csw
 
   export default {
     data () {
@@ -136,7 +214,51 @@
         // https://gist.github.com/logaretm/13f9f0fa1df5b1ecf1e5#file-directives-js
         // bind, inserted, update, unbind
         update: function (el,maskval) {
+          $(el).mask(maskval.value, {reverse:false});
+        }
+      },
+      maskrev: {
+        update: function (el,maskval) {
           $(el).mask(maskval.value, {reverse:true});
+        }
+      },
+      intlphone: {
+        // https://github.com/jackocnr/intl-tel-input
+        // https://github.com/jackocnr/intl-tel-input/blob/master/demo.html
+        // bind, inserted, update, unbind
+        update: function (el) {
+          // https://raw.githubusercontent.com/jackocnr/intl-tel-input/master/build/js/utils.js
+          //$.fn.intlTelInput.loadUtils(intl_tel_utils_path);
+          //$(el).intlTelInput();
+
+          var intl_tel_utils_path = 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js';
+          var telInput = $(el);
+          var errorMsg = $('#invalid-phone');
+          var validMsg = $('#valid-phone');
+
+          telInput.intlTelInput({utilsScript: intl_tel_utils_path });
+
+          var reset = function() {
+            telInput.removeClass("error");
+            errorMsg.addClass("is-hidden");
+            validMsg.addClass("is-hidden");
+          };
+
+          // on blur: validate
+          telInput.blur(function() {
+            reset();
+            if ($.trim(telInput.val())) {
+              if (telInput.intlTelInput("isValidNumber")) {
+                validMsg.removeClass("is-hidden");
+              } else {
+                telInput.addClass("error");
+                errorMsg.removeClass("is-hidden");
+              }
+            }
+          });
+
+          // on keyup / change flag: reset
+          telInput.on("keyup change", reset);
         }
       }
     },
@@ -146,6 +268,8 @@
     mounted() {
       // hardcoded mask set with jquery
       //$('#unitValue').mask('#.##0,00', {reverse:true});
+      //var intl_tel_utils_path = './../assets/js/intln-tel-input/utils.js';
+      //$('#phone').intlTelInput({utilsScript: intl_tel_utils_path });
     },
     methods: {
       onChangePage(page) {
@@ -228,8 +352,11 @@
         if (this.selected.id != null) { // EDIT A PRODUCT
           this.$http.put(`/products/${this.selected.id}`, this.selected).then(
             response => {
-              this.$set('selected', {})
-              this.$set('showModal', false)
+              this.$set(this, 'selected', {})
+              this.$set(this, 'showModal', false)
+              // OR (https://vuejs.org/v2/guide/migration.html#vm-set-changed)
+              // this.selected = {}
+              // this.showModal = false
             },
             error => {
               console.error(error)
@@ -240,8 +367,8 @@
         } else { // NEW PRODUCT
           this.$http.post(`/products`, this.selected).then(
             response => {
-              this.$set('selected', {})
-              this.$set('showModal', false)
+              this.$set(this, 'selected', {})
+              this.$set(this, 'showModal', false)
             },
             error => {
               console.error(error)

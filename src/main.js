@@ -16,14 +16,11 @@ var $ = require('jquery');
 global.jQuery = global.$ = window.jQuery = $;
 require("jquery-mask-plugin");
 
-// require("bulma");
-// require("font-awesome");
-// require("./assets/css/global.css");
-
 const appRoutes = new VueRouter({
   mode: 'history',
   routes: [
     { path: '/', component: App },
+    { path: '/home', component: Products },
     { path: '/login', component: Login },
     { path: '/list-products', component: Products },
     { path: '/about', component: About },
