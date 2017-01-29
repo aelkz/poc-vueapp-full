@@ -105,28 +105,28 @@
               <p class="control">
                 <label class="label">Data de aquisição</label>
                   <input class="input" type="text" placeholder="Data de aquisição" v-model="selected.acquisitionDate" v-if="!isNew" />
-                  <Flatpickr class="input" v-model="selected.acquisitionDate" :options="fpOptions" placeholder="Data de aquisição" v-else />
+                  <datepicker class="input" v-model="selected.acquisitionDate" :options="fpOptions" placeholder="Data de aquisição" v-else />
               </p>
             </div>
           </div>
 
           <div class="columns">
-            <div class="column is-half">
+            <div class="column">
               <p class="control">
                 <label class="label">Categoria</label>
                 <span class="select">
-                  <select>
-                    <option>hardware</option>
-                    <option>software</option>
+                  <select v-model="selected.category" v-on:change="replaceSubcategories">
+                    <option v-for="item in categories" v-bind:value="item.value"> {{item.label}} </option>
                   </select>
                 </span>
               </p>
             </div>
-            <div class="column is-half">
+            <div class="column">
               <p class="control">
                 <label class="label">Sub-categoria</label>
                 <span class="select">
-                  <select>
+                  <select v-model="selected.subcategory">
+                      <option v-for="item in subcategories" v-bind:value="item.value"> {{ item.label }} </option>
                   </select>
                 </span>
               </p>
@@ -177,14 +177,6 @@
 </template>
 
 <script>
-  /* eslint-disable no-undef */
-  import Vue from 'vue'
-  import Pagination from './Pagination.vue'
-  import VLink from './VLink.vue'
-  import VueFlatpickr from 'vue-flatpickr'
-
-  require("intl-tel-input");
-
   // jquery mask
   // http://igorescobar.github.io/jQuery-Mask-Plugin/
 
@@ -192,8 +184,27 @@
   // https://jrainlau.github.io/vue-flatpickr/
   // https://chmln.github.io/flatpickr/
 
+  // vue-select (not ready for vue 2.0 yet)
+  // https://sagalbot.github.io/vue-select/
+  // https://github.com/sagalbot/vue-select/issues/94
+  // http://element.eleme.io
+  // https://jsfiddle.net/aj6g87dh/1/
+
   // form validation
   // https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.nxac31csw
+
+  /* eslint-disable no-undef */
+  import Vue from 'vue'
+  import Pagination from './Pagination.vue'
+  import VLink from './VLink.vue'
+  import VueFlatpickr from 'vue-flatpickr'
+  import { Select, Option } from 'element-ui'
+
+  require("intl-tel-input");
+  require("element-ui");
+
+  Vue.use(Select);
+  Vue.use(Option);
 
   export default {
     data () {
@@ -209,6 +220,40 @@
         readOnly: false,
         isLoading: false,
         isNew: false,
+        categories: [{
+          value: 'hardware',
+          label: 'Hardware'
+        },{
+          value: 'software',
+          label: 'Software'
+        }],
+        subcategories: [],
+        hardwarecategories: [{
+          value: 'computadores',
+          label: 'Computadores'
+        },{
+          value: 'impressoras',
+          label: 'Impressoras'
+        },{
+          value: 'componentes',
+          label: 'Componentes e peças'
+        }],
+        softwarecategories: [{
+          value: 'edicao',
+          label: 'Edição de Imagens'
+        },{
+          value: 'suites',
+          label: 'Suítes office'
+        },{
+          value: 'video',
+          label: 'Produção de vídeo'
+        },{
+          value: 'virus',
+          label: 'Anti-virus'
+        },{
+          value: 'util',
+          label: 'Utilitários'
+        }],
         fpOptions: {
           minDate: '1950-01-01',
           maxDate: '2100-12-31',
@@ -246,7 +291,7 @@
           var errorMsg = $('#invalid-phone');
           var validMsg = $('#valid-phone');
 
-          telInput.intlTelInput({utilsScript: intl_tel_utils_path, initialCountry: 'BR', nationalMode: true });
+          telInput.intlTelInput({utilsScript: intl_tel_utils_path, initialCountry: 'BR', nationalMode: true, autoPlaceholder: 'aggressive' });
 
           var reset = function() {
             telInput.removeClass("error");
@@ -255,15 +300,15 @@
           };
 
           var currentFormat = function() {
-            var placeholder = $(telInput).attr('placeholder');
+            var placeholder = telInput.attr('placeholder');
             placeholder = placeholder.replace(new RegExp("[0-9]", "g"), "0");
             return placeholder;
           };
 
           var isBR = function() {
-            var number = telInput.intlTelInput("getNumber");
+            var val = $.trim(telInput.val());
             var data = telInput.intlTelInput("getSelectedCountryData");
-            if (data.dialCode == 55 && (number.length == 13 || number.length == 14)) {
+            if (data.dialCode == 55 && (val.length == 11 || val.length == 10)) {
                 return true;
             }
             return false;
@@ -287,13 +332,8 @@
             }
           };
 
-          telInput.focus(function() {
-            // setup mask only once from placeholder's current value
-            mask();
-          });
-
           telInput.change(function() {
-            mask();
+            // setup mask only once from placeholder's current value
             reset();
           });
 
@@ -301,6 +341,9 @@
           telInput.blur(function() {
             reset();
             if ($.trim(telInput.val())) {
+              //console.log(telInput.val());
+              //console.log(telInput.intlTelInput("getNumber"));
+
               if (telInput.intlTelInput("isValidNumber") || isBR()) {
                 validMsg.removeClass("is-hidden");
               } else {
@@ -314,7 +357,7 @@
       }
     },
     components: {
-      Pagination, VLink, 'Flatpickr': VueFlatpickr
+      Pagination, VLink, 'datepicker': VueFlatpickr
     },
     mounted() {
       // hardcoded mask set with jquery
@@ -323,6 +366,18 @@
       //$('#phone').intlTelInput({utilsScript: intl_tel_utils_path });
     },
     methods: {
+      replaceSubcategories() {
+        switch(this.selected.category) {
+          case 'hardware':
+            this.subcategories = this.hardwarecategories;
+            break;
+          case 'software':
+            this.subcategories = this.softwarecategories;
+            break;
+          default:
+            this.subcategories = this.hardwarecategories;
+        }
+      },
       onChangePage(page) {
         this.page = page
         this.loadProducts()

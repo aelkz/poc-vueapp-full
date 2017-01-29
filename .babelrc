@@ -4,7 +4,16 @@
   "comments": false,
   "env": {
     "test": {
-      "plugins": [ "istanbul" ]
+      "plugins": [
+        "istanbul",
+        "component",
+        [
+          {
+            "libraryName": "element-ui",
+            "styleLibraryName": "theme-default"
+          }
+        ]
+      ]
     }
   }
 }
