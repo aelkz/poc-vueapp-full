@@ -32,3 +32,24 @@ label.label {
 }
 
 .fixo{float: right; margin-right: 10px; margin-top: 0px; z-index: 1000;}
+
+textarea,
+.textarea {
+  min-height: inherit;
+  height: auto;
+}
+
+.intl-tel-input {
+  display: table-cell;
+}
+
+.intl-tel-input .flag-container {
+  z-index: 4;
+}
+
+.input-group .intl-tel-input .form-control {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 0;
+}

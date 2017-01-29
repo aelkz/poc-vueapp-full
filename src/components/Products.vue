@@ -104,7 +104,8 @@
             <div class="column">
               <p class="control">
                 <label class="label">Data de aquisição</label>
-                <input class="input" type="text" placeholder="Data de aquisição" v-model="selected.acquisitionDate" v-mask="'00/00/0000'" />
+                  <input class="input" type="text" placeholder="Data de aquisição" v-model="selected.acquisitionDate" v-if="!isNew" />
+                  <Flatpickr class="input" v-model="selected.acquisitionDate" :options="fpOptions" placeholder="Data de aquisição" v-else />
               </p>
             </div>
           </div>
@@ -155,7 +156,7 @@
                 <input class="input" type="text" placeholder="E-mail do fornecedor" v-model="selected.vendorMail" />
               </p>
             </div>
-            <div class="column">
+            <div class="column"> <!-- TODO - hide the component when not used for create/update -->
               <label class="label">Telefone comercial do fornecedor</label>
               <p class="control">
                 <input type="tel" class="input" v-model="selected.vendorPhone" v-intlphone>
@@ -180,15 +181,16 @@
   import Vue from 'vue'
   import Pagination from './Pagination.vue'
   import VLink from './VLink.vue'
+  import VueFlatpickr from 'vue-flatpickr'
 
   require("intl-tel-input");
 
   // jquery mask
   // http://igorescobar.github.io/jQuery-Mask-Plugin/
 
-  // datepicker
-  // https://laracasts.com/discuss/channels/vue/vuejs-get-v-model-value-in-custom-directive
-  // https://forum.vuejs.org/t/making-jquery-ui-datepicker-works-with-vuejs/2752/7
+  // datepicker (use fpOptions for configuration)
+  // https://jrainlau.github.io/vue-flatpickr/
+  // https://chmln.github.io/flatpickr/
 
   // form validation
   // https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.nxac31csw
@@ -206,7 +208,15 @@
         showModal: false,
         readOnly: false,
         isLoading: false,
-        isNew: false
+        isNew: false,
+        fpOptions: {
+          minDate: '1950-01-01',
+          maxDate: '2100-12-31',
+          dateFormat: 'd/m/Y',
+          allowInput: true,
+          enableTime: false,
+          time_24hr: true
+        }
       }
     },
     directives: {
@@ -236,7 +246,7 @@
           var errorMsg = $('#invalid-phone');
           var validMsg = $('#valid-phone');
 
-          telInput.intlTelInput({utilsScript: intl_tel_utils_path });
+          telInput.intlTelInput({utilsScript: intl_tel_utils_path, initialCountry: 'BR', nationalMode: true });
 
           var reset = function() {
             telInput.removeClass("error");
@@ -244,11 +254,54 @@
             validMsg.addClass("is-hidden");
           };
 
+          var currentFormat = function() {
+            var placeholder = $(telInput).attr('placeholder');
+            placeholder = placeholder.replace(new RegExp("[0-9]", "g"), "0");
+            return placeholder;
+          };
+
+          var isBR = function() {
+            var number = telInput.intlTelInput("getNumber");
+            var data = telInput.intlTelInput("getSelectedCountryData");
+            if (data.dialCode == 55 && (number.length == 13 || number.length == 14)) {
+                return true;
+            }
+            return false;
+          }
+
+          var SPMaskBehavior = function (val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+          }, spOptions = {
+              onKeyPress: function(val, e, field, options) {
+                field.mask(SPMaskBehavior.apply({}, arguments), options);
+              }
+          };
+
+          var mask = function() {
+            // FIX for BR number (changing placeholder value)
+            // http://www.anatel.gov.br/setorregulado/index.php/nono-digito
+            if (isBR()) {
+              telInput.mask(SPMaskBehavior, spOptions);
+            }else {
+              telInput.mask(currentFormat(), {reverse:false});
+            }
+          };
+
+          telInput.focus(function() {
+            // setup mask only once from placeholder's current value
+            mask();
+          });
+
+          telInput.change(function() {
+            mask();
+            reset();
+          });
+
           // on blur: validate
           telInput.blur(function() {
             reset();
             if ($.trim(telInput.val())) {
-              if (telInput.intlTelInput("isValidNumber")) {
+              if (telInput.intlTelInput("isValidNumber") || isBR()) {
                 validMsg.removeClass("is-hidden");
               } else {
                 telInput.addClass("error");
@@ -257,13 +310,11 @@
             }
           });
 
-          // on keyup / change flag: reset
-          telInput.on("keyup change", reset);
         }
       }
     },
     components: {
-      Pagination, VLink
+      Pagination, VLink, 'Flatpickr': VueFlatpickr
     },
     mounted() {
       // hardcoded mask set with jquery

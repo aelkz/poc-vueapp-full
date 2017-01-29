@@ -9,7 +9,7 @@
             <span>Vue.js 2.1.0</span>
           </a>
         </div>
-        <div class="nav-center">
+        <div class="nav-center nav-menu">
           <a class="nav-item is-tab is-hidden-mobile" v-bind:class="{ 'is-active': !authenticated }">
             <v-link href="/">
               <span class="icon">

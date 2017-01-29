@@ -9,3 +9,11 @@
 
 $fa-font-path: './../../../node_modules/font-awesome/fonts/';
 @import "./../../../node_modules/font-awesome/css/font-awesome.min.css";
+
+.iti-flag {background-image: url("./../../../node_modules/intl-tel-input/build/img/flags.png");}
+@import "./../../../node_modules/intl-tel-input/build/css/intlTelInput.css";
+
+@import "./../../../node_modules/vue-flatpickr/theme/airbnb.css";
+.flatpickr-calendar.open {
+  z-index: 10000;
+}
