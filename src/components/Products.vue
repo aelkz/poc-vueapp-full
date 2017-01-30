@@ -59,7 +59,7 @@
         <header class="modal-card-head">
           <p class="modal-card-title" v-if="!isNew">Detalhes do produto: {{selected.name}}</p>
           <p class="modal-card-title" v-else>Cadastrar novo produto</p>
-          <button class="delete" @click.prevent="showModal=false"></button>
+          <button class="delete" @click.prevent="showModal=false, clearValidation()"></button>
         </header>
 
         <section class="modal-card-body">
@@ -74,7 +74,8 @@
             <div class="column is-three-quarters">
               <label class="label">Nome</label>
               <p class="control">
-                <input class="input" type="text" placeholder="Nome" :readonly="readOnly" v-model="selected.name">
+                <input class="input" type="text" placeholder="Nome" name="name" :readonly="readOnly" v-model="selected.name" v-validate data-vv-rules="required" :class="{'is-danger': errors.has('name')}">
+                <span class="help is-danger" v-if="errors.has('name')">{{ errors.first('name') }}</span>
               </p>
             </div>
           </div>
@@ -83,7 +84,8 @@
             <div class="column">
               <label class="label">Descrição</label>
               <p class="control">
-                <textarea class="textarea" placeholder="Descrição" v-model="selected.description"></textarea>
+                <textarea class="textarea" placeholder="Descrição" name="description" v-model="selected.description" v-validate data-vv-rules="required" :class="{'is-danger': errors.has('description')}"></textarea>
+                <span class="help is-danger" v-if="errors.has('description')">{{ errors.first('description') }}</span>
               </p>
             </div>
           </div>
@@ -92,20 +94,23 @@
             <div class="column">
               <p class="control">
                 <label class="label">Valor unitário</label>
-                <input class="input" type="text" placeholder="Valor unitário" v-model="selected.unitValue" v-maskrev="'#.##0,00'" />
+                <input class="input" type="text" placeholder="Valor unitário" name="unitValue" v-model="selected.unitValue" v-maskrev="'#.##0,00'" v-validate data-vv-rules="required" :class="{'is-danger': errors.has('unitValue')}" />
+                <span class="help is-danger" v-if="errors.has('unitValue')">{{ errors.first('unitValue') }}</span>
               </p>
             </div>
             <div class="column">
               <p class="control">
                 <label class="label">Número serial</label>
-                <input class="input" type="text" placeholder="Número serial" v-model="selected.serialNumber" v-mask="'SSS-000-000'" />
+                <input class="input" type="text" placeholder="Número serial" name="serialNumber" v-model="selected.serialNumber" v-mask="'SSS-000-000'" v-validate data-vv-rules="required" :class="{'is-danger': errors.has('serialNumber')}" />
+                <span class="help is-danger" v-if="errors.has('serialNumber')">{{ errors.first('serialNumber') }}</span>
               </p>
             </div>
             <div class="column">
               <p class="control">
                 <label class="label">Data de aquisição</label>
                   <input class="input" type="text" placeholder="Data de aquisição" v-model="selected.acquisitionDate" v-if="!isNew" />
-                  <datepicker class="input" v-model="selected.acquisitionDate" :options="fpOptions" placeholder="Data de aquisição" v-else />
+                  <datepicker class="input" name="acquisitionDate" v-model="selected.acquisitionDate" :options="fpOptions" placeholder="Data de aquisição" v-validate data-vv-rules="required" :class="{'is-danger': errors.has('acquisitionDate')}" v-else />
+                  <span class="help is-danger" v-if="errors.has('acquisitionDate')">{{ errors.first('acquisitionDate') }}</span>
               </p>
             </div>
           </div>
@@ -115,9 +120,10 @@
               <p class="control">
                 <label class="label">Categoria</label>
                 <span class="select">
-                  <select v-model="selected.category" v-on:change="replaceSubcategories">
+                  <select v-model="selected.category" v-on:change="replaceSubcategories" v-validate data-vv-rules="required" :class="{'is-danger': errors.has('category')}">
                     <option v-for="item in categories" v-bind:value="item.value"> {{item.label}} </option>
                   </select>
+                  <span class="help is-danger" v-if="errors.has('category')">{{ errors.first('category') }}</span>
                 </span>
               </p>
             </div>
@@ -170,7 +176,7 @@
 
         <footer class="modal-card-foot">
           <a class="button is-primary" @click.prevent="saveProduct">Salvar</a>
-          <a class="button" @click.prevent="showModal=false">Cancelar</a>
+          <a class="button" @click.prevent="showModal=false, clearValidation()">Cancelar</a>
         </footer>
       </div>
     </div>
@@ -460,6 +466,9 @@
             })
         })
       },
+      clearValidation() {
+        this.errors.clear();
+      },
       saveProduct() {
         if (this.selected.id != null) { // EDIT A PRODUCT
           this.$http.put(`/products/${this.selected.id}`, this.selected).then(
@@ -477,17 +486,29 @@
             this.loadProducts()
           })
         } else { // NEW PRODUCT
-          this.$http.post(`/products`, this.selected).then(
-            response => {
-              this.$set(this, 'selected', {})
-              this.$set(this, 'showModal', false)
-            },
-            error => {
-              console.error(error)
-            }
-          ).finally(function () {
-            this.loadProducts()
-          })
+          // Validate All returns a promise and provides the validation result.
+          this.$validator.validateAll().then(
+            success => {
+              if (!success) {
+                // handle error
+                return;
+              }
+              this.$http.post(`/products`, this.selected).then(
+                response => {
+                  this.$set(this, 'selected', {})
+                  this.$set(this, 'showModal', false)
+                },
+                error => {
+                  console.error(error)
+                }
+              ).finally(function () {
+                this.clearValidation();
+                this.loadProducts()
+              })
+          },
+          error => {
+            console.log('form validation triggered');
+          });
         }
       }
     },
