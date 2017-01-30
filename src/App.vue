@@ -5,8 +5,8 @@
       <div class="container">
         <div class="nav-left">
           <a class="nav-item">
-            <img src="./src/assets/img/logo.png" class="vue-logo" title="Vue.js 2.1.0">
-            <span>Vue.js 2.1.0</span>
+            <img src="./src/assets/img/logo.png" class="vue-logo" title="Vue.js 2.1.10">
+            <span>Vue.js 2.1.10</span>
           </a>
         </div>
         <div class="nav-center nav-menu">
@@ -48,25 +48,29 @@
     <div class="card" v-show="!authenticated">
       <div class="card-content">
         <div class="content">
-          A simple CRUD designed with Vue.js 2.1.0
+          A simple CRUD designed with Vue.js 2.1.10
           <br/><br/>
           Integrated modules:
           <br/>
-          - Auth0 (JWT and OAuth2 authentication library)
+          - <b>Auth0</b> (JWT and OAuth2 authentication library)
           <br/>
-          - json-server (simple backend API for getting app database)
+          - <b>json-server</b> (simple backend API for getting app database)
           <br/>
-          - bulma.io (like bootstrap)
+          - <b>bulma.io</b> (like bootstrap)
           <br/>
-          - sweetalert (for beautiful javascript alerts)
+          - <b>font-awesome</b> (icon library)
           <br/>
-          - sweetalert (for beautiful javascript alerts)
+          - <b>sweetalert</b> (for beautiful javascript alerts)
           <br/>
-          - webpack/browserify (for packaging and building your app)
+          - <b>vee-validator</b> (for form validation)
+          <br/>
+          - <b>vue-flatpickr</b> (datepicker)
+          <br/>
+          - <b>webpack/browserify</b> (for packaging and building your app)
           <br/>
           - and a lot more!
           <br>
-          <small>Last update: 26/01/2017 14:30</small><br/>
+          <small>Last update: 30/01/2017</small><br/>
           <small>raphael.alex@gmail.com</small>
         </div>
       </div>

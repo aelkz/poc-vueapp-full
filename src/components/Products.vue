@@ -138,12 +138,12 @@
               <p class="control">
                 <label class="label">Situação</label>
                 <label class="radio">
-                  <input type="radio" name="status" v-model="selected.status">
-                  Disponível
+                  <input type="radio" value="D" v-model="status">
+                  <label for="disponivel">Disponível</label>
                 </label>
                 <label class="radio">
-                  <input type="radio" name="statusn" v-model="selected.status">
-                  Em utilização
+                  <input type="radio" id="utilizado" value="U" v-model="status">
+                  <label for="utilizado">Em utilização</label>
                 </label>
               </p>
             </div>
@@ -153,7 +153,8 @@
             <div class="column is-half">
               <p class="control">
                 <label class="label">E-mail do fornecedor</label>
-                <input class="input" type="text" placeholder="E-mail do fornecedor" v-model="selected.vendorMail" />
+                <input name="email" v-validate data-vv-rules="required|email" class="input" :class="{'is-danger': errors.has('email')}" type="text" placeholder="E-mail do fornecedor" v-model="selected.vendorMail" />
+                <span class="help is-danger" v-if="errors.has('email')">{{ errors.first('email') }}</span>
               </p>
             </div>
             <div class="column"> <!-- TODO - hide the component when not used for create/update -->
@@ -191,7 +192,9 @@
   // https://jsfiddle.net/aj6g87dh/1/
 
   // form validation
-  // https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.nxac31csw
+  // https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d
+  // https://github.com/logaretm/vee-validate
+  // http://vee-validate.logaretm.com/#basic-example
 
   /* eslint-disable no-undef */
   import Vue from 'vue'
@@ -199,12 +202,14 @@
   import VLink from './VLink.vue'
   import VueFlatpickr from 'vue-flatpickr'
   import { Select, Option } from 'element-ui'
+  import VeeValidate from 'vee-validate';
 
   require("intl-tel-input");
   require("element-ui");
 
   Vue.use(Select);
   Vue.use(Option);
+  Vue.use(VeeValidate);
 
   export default {
     data () {
@@ -220,6 +225,7 @@
         readOnly: false,
         isLoading: false,
         isNew: false,
+        status: 'D',
         categories: [{
           value: 'hardware',
           label: 'Hardware'
